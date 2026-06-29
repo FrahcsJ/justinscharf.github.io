@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Justin Scharf — Systems Administrator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2332;
+    --navy-soft: #232f42;
+    --bg: #f7f8fa;
+    --bg-panel: #ffffff;
+    --steel: #3d5a73;
+    --steel-light: #6e8aa3;
+    --teal: #4f9b82;
+    --teal-bg: #e9f5f0;
+    --rust: #b85c38;
+    --rust-bg: #faece4;
+    --gray: #8a94a3;
+    --gray-line: #dde1e6;
+    --text: #1a2332;
+    --text-soft: #4a5568;
+    --radius: 6px;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  :focus-visible {
+    outline: 2px solid var(--steel);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ---------- NAV ---------- */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(247, 248, 250, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--gray-line);
+  }
+  .nav-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--teal);
+    display: inline-block;
+    box-shadow: 0 0 0 3px var(--teal-bg);
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .nav-links a {
+    color: var(--text-soft);
+    transition: color 0.15s ease;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--navy); }
+  .nav-toggle { display: none; }
+
+  @media (max-width: 720px) {
+    .nav-links { display: none; }
+  }
+
+  /* ---------- HERO ---------- */
+  header.hero {
+    padding: 88px 0 72px;
+    border-bottom: 1px solid var(--gray-line);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 56px;
+    align-items: center;
+  }
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--teal);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 18px;
+    height: 1px;
+    background: var(--teal);
+  }
+  h1 {
+    font-size: 46px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 18px;
+  }
+  h1 span { color: var(--steel); }
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-soft);
+    max-width: 480px;
+    margin-bottom: 32px;
+  }
+  .hero-cta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: var(--navy);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--steel); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--navy);
+    border-color: var(--gray-line);
+  }
+  .btn-secondary:hover { border-color: var(--navy); }
+
+  /* Terminal boot block */
+  .terminal {
+    background: var(--navy);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 12px 32px -8px rgba(26,35,50,0.25);
+  }
+  .terminal-bar {
+    background: var(--navy-soft);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .terminal-bar span {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+  }
+  .terminal-label {
+    margin-left: 6px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.4);
+  }
+  .terminal-body {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #cfd8e3;
+    padding: 22px 20px;
+    min-height: 220px;
+  }
+  .terminal-body .line { margin-bottom: 9px; opacity: 0; animation: fadeIn 0.35s ease forwards; }
+  .terminal-body .ok { color: var(--teal); }
+  .terminal-body .prompt { color: var(--steel-light); }
+  .terminal-body .cursor {
+    display: inline-block;
+    width: 7px; height: 14px;
+    background: var(--teal);
+    margin-left: 4px;
+    animation: blink 1s step-end infinite, fadeIn 0.35s ease forwards;
+    vertical-align: -2px;
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- SECTION HEADERS ---------- */
+  section { padding: 80px 0; }
+  .section-head { margin-bottom: 44px; }
+  .section-head .eyebrow { margin-bottom: 12px; }
+  h2 {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .section-desc {
+    color: var(--text-soft);
+    font-size: 15.5px;
+    max-width: 560px;
+    margin-top: 10px;
+  }
+
+  /* ---------- ABOUT ---------- */
+  #about { border-bottom: 1px solid var(--gray-line); }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  @media (max-width: 760px) { .about-grid { grid-template-columns: 1fr; } }
+  .about-text p { color: var(--text-soft); margin-bottom: 16px; font-size: 15.5px; }
+  .skill-group { margin-bottom: 22px; }
+  .skill-group-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+  .skill-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--gray-line);
+    color: var(--text-soft);
+  }
+  .cert-list {
+    list-style: none;
+    margin-top: 8px;
+  }
+  .cert-list li {
+    font-size: 14.5px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-line);
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-soft);
+  }
+  .cert-list li:first-child { padding-top: 0; }
+  .cert-list .cert-name { color: var(--navy); font-weight: 500; }
+  .cert-list .cert-year { font-family: var(--mono); font-size: 13px; color: var(--gray); }
+
+  /* ---------- PROJECTS ---------- */
+  #projects { border-bottom: 1px solid var(--gray-line); }
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 860px) { .project-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .project-grid { grid-template-columns: 1fr; } }
+  .project-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--gray-line);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .project-card:hover {
+    border-color: var(--steel-light);
+    transform: translateY(-2px);
+  }
+  .project-icon {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--steel);
+    background: #eef2f6;
+    width: fit-content;
+    padding: 4px 9px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    letter-spacing: 0.04em;
+  }
+  .project-card h3 { font-size: 16.5px; font-weight: 600; margin-bottom: 8px; }
+  .project-card p { font-size: 14px; color: var(--text-soft); flex-grow: 1; margin-bottom: 16px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--steel);
+    background: #eef2f6;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .project-link {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--navy);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .project-link::after { content: '→'; transition: transform 0.15s ease; }
+  .project-link:hover::after { transform: translateX(3px); }
+
+  /* ---------- LAB / TICKETS ---------- */
+  #lab { border-bottom: 1px solid var(--gray-line); }
+  .ticket {
+    background: var(--bg-panel);
+    border: 1px solid var(--gray-line);
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .ticket-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    cursor: pointer;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .ticket-head-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .ticket-id {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--gray);
+  }
+  .ticket-title { font-size: 16px; font-weight: 600; }
+  .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 4px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .badge-sev1 { background: var(--rust-bg); color: var(--rust); }
+  .badge-sev2 { background: #fbf0d9; color: #a47422; }
+  .badge-sev3 { background: #e9eef3; color: var(--steel); }
+  .badge-resolved { background: var(--teal-bg); color: var(--teal); }
+  .ticket-toggle {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--gray);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .ticket.open .ticket-toggle { transform: rotate(45deg); }
+  .ticket-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    border-top: 1px solid transparent;
+  }
+  .ticket.open .ticket-body {
+    border-top: 1px solid var(--gray-line);
+  }
+  .ticket-body-inner { padding: 22px; }
+  .tb-row { margin-bottom: 18px; }
+  .tb-row:last-child { margin-bottom: 0; }
+  .tb-label {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tb-label::before { content: ''; width: 12px; height: 1px; background: var(--gray-line); }
+  .tb-text { font-size: 14.5px; color: var(--text-soft); }
+  .code-block {
+    background: var(--navy);
+    border-radius: 5px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #cfd8e3;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+  .code-block .cmt { color: var(--gray); }
+  .code-block .promptchar { color: var(--teal); }
+  .meta-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--gray);
+    font-family: var(--mono);
+    padding-top: 4px;
+  }
+
+  /* ---------- CONTACT ---------- */
+  #contact { padding: 88px 0 96px; }
+  .contact-box {
+    background: var(--navy);
+    border-radius: 10px;
+    padding: 56px 48px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  @media (max-width: 760px) { .contact-box { grid-template-columns: 1fr; padding: 40px 28px; } }
+  .contact-box h2 { color: #fff; margin-bottom: 12px; }
+  .contact-box p { color: #aebcca; font-size: 15px; max-width: 420px; }
+  .contact-links { display: flex; flex-direction: column; gap: 12px; }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    color: #fff;
+    font-size: 14.5px;
+    font-weight: 500;
+    transition: background 0.15s ease;
+  }
+  .contact-link:hover { background: rgba(255,255,255,0.1); }
+  .contact-link .arrow { font-family: var(--mono); color: var(--teal); }
+
+  footer {
+    text-align: center;
+    padding: 28px 0 40px;
+    font-size: 13px;
+    color: var(--gray);
+    font-family: var(--mono);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><span class="dot"></span>justin.scharf — sysadmin track</div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#lab">The Lab</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">AAS, Computer Information Technology — Security</div>
+        <h1>Ten years managing people and escalations. Now I'm building the <span>technical</span> side.</h1>
+        <p class="hero-sub">I'm completing my transition into systems administration — backed by a decade of high-volume troubleshooting and team leadership, an AAS in Computer Information Technology with a Security concentration, and hands-on practice with networking, Linux/Windows, and virtualization. This site tracks that progress in the open.</p>
+        <div class="hero-cta">
+          <a href="#lab" class="btn btn-primary">View the Lab</a>
+          <a href="#contact" class="btn btn-secondary">Download Resume</a>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span></span><span></span><span></span>
+          <span class="terminal-label">status-check.sh</span>
+        </div>
+        <div class="terminal-body" id="bootTerminal"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">About</div>
+      <h2>Background &amp; skills</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I spent the last decade leading teams through high-volume, high-pressure environments — supervising billing and customer service staff at NYU Langone, managing escalations for teams of up to 15, and acting as the go-to person when something broke and needed to get fixed fast. That work is full of the same instincts SysAdmin work demands: stay calm, isolate the actual problem, fix it, and put something in place so it doesn't happen again.</p>
+        <p>In 2025 I completed my AAS in Computer Information Technology with a Security concentration and have been building the hands-on technical side since: networking fundamentals, Linux and Windows administration, and packet-level troubleshooting with tools like Wireshark and VirtualBox. The Lab section below is where I'm documenting that practice in public as I build toward a SysAdmin role.</p>
+
+        <div class="skill-group">
+          <div class="skill-group-label">Technical skills (coursework &amp; self-study)</div>
+          <div class="skill-pills">
+            <span class="pill">TCP/IP</span>
+            <span class="pill">DNS / DHCP</span>
+            <span class="pill">HTTP/HTTPS</span>
+            <span class="pill">Linux</span>
+            <span class="pill">Windows</span>
+            <span class="pill">Wireshark</span>
+            <span class="pill">VMware / VirtualBox</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-label">Operational skills (10+ years)</div>
+          <div class="skill-pills">
+            <span class="pill">Incident Escalation</span>
+            <span class="pill">Team Leadership</span>
+            <span class="pill">Process Improvement</span>
+            <span class="pill">High-Volume Troubleshooting</span>
+            <span class="pill">CRM Platforms</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-group-label">Education</div>
+        <ul class="cert-list">
+          <li><span class="cert-name">AAS, Computer Information Technology — Security — College of Southern Nevada</span><span class="cert-year">2025</span></li>
+          <li><span class="cert-name">High School Diploma — Oswego High School</span><span class="cert-year">2007</span></li>
+        </ul>
+        <div class="skill-group-label" style="margin-top:24px;">Certifications</div>
+        <ul class="cert-list">
+          <li><span class="cert-name">CompTIA Network+</span><span class="cert-year">pending</span></li>
+          <li><span class="cert-name">CompTIA Linux+</span><span class="cert-year">pending</span></li>
+        </ul>
+        <p style="font-size:13px;color:var(--gray);margin-top:14px;">No certifications held yet — listed here as goals, updated once earned.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Track Record</div>
+      <h2>What ten years of escalations taught me</h2>
+      <p class="section-desc">No GitHub repos yet — that's coming as the Lab section grows. This is the operational experience I'm bringing into a technical role.</p>
+    </div>
+    <div class="project-grid">
+
+      <div class="project-card">
+        <div class="project-icon">OPS</div>
+        <h3>Supervisor — NYU Langone</h3>
+        <p>Supervised a team of 10 billing and customer service reps. Identified workflow inefficiencies and partnered with management to fix them, and served as subject-matter expert when escalated insurance or billing issues needed fast, correct answers.</p>
+        <div class="tag-row"><span class="tag">2021–2026</span><span class="tag">team leadership</span></div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-icon">OPS</div>
+        <h3>Team Manager — 24-7 Intouch</h3>
+        <p>Led a 15-person support team. Ran real-time call monitoring and QA to catch performance gaps early, then implemented process changes that measurably reduced escalations.</p>
+        <div class="tag-row"><span class="tag">2018–2021</span><span class="tag">process improvement</span></div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-icon">OPS</div>
+        <h3>Team Manager — Sutherland Global</h3>
+        <p>Managed up to 15 consultants against enterprise KPIs. Used performance data to find gaps and built targeted coaching plans to close them.</p>
+        <div class="tag-row"><span class="tag">2012–2017</span><span class="tag">performance analysis</span></div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-icon">EDU</div>
+        <h3>AAS, Computer Information Technology — Security</h3>
+        <p>College of Southern Nevada, completed 2025. Coursework covered networking fundamentals, OS administration, and security concepts — including foundational threat detection, access control, and system hardening.</p>
+        <div class="tag-row"><span class="tag">networking</span><span class="tag">linux/windows</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="lab">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">The Lab</div>
+      <h2>Home lab — in progress</h2>
+      <p class="section-desc">This is where home lab write-ups will go — DNS, networking, and Linux/Windows troubleshooting exercises, documented incident-report style as I complete them.</p>
+    </div>
+
+    <div id="ticketList"></div>
+    <div style="border:1px dashed var(--gray-line);border-radius:var(--radius);padding:36px;text-align:center;">
+      <p style="font-size:14.5px;color:var(--gray);">No labs published yet — first write-up coming soon.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-box">
+      <div>
+        <h2>Let's talk infrastructure.</h2>
+        <p>Open to entry-level SysAdmin, Help Desk → SysAdmin track, and IT Support roles. I respond to email fastest.</p>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:justinscharfff@gmail.com" class="contact-link">justinscharfff@gmail.com <span class="arrow">→</span></a>
+        <a href="tel:3154163563" class="contact-link">315-416-3563 <span class="arrow">→</span></a>
+        <a href="#" class="contact-link">Download Resume (PDF) <span class="arrow">→</span></a>
+        <a href="#" class="contact-link">linkedin.com/in/justinscharf <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  built &amp; maintained by justin scharf — last updated June 2026
+</footer>
+
+<script>
+  // Boot sequence in hero terminal
+  const bootLines = [
+    { html: '<span class="prompt">$</span> uname -a', cls: '' },
+    { html: 'Linux lab-vm 6.8.0  x86_64  <span class="cmt"># home lab, VirtualBox</span>', cls: '' },
+    { html: '<span class="prompt">$</span> nmap -sV 192.168.56.0/24', cls: '' },
+    { html: 'Host 192.168.56.10  open: 22/tcp, 53/tcp, 80/tcp', cls: '' },
+    { html: '<span class="prompt">$</span> systemctl status bind9', cls: '' },
+    { html: '● bind9.service — <span class="ok">active (running)</span>', cls: '' },
+    { html: '<span class="prompt">$</span> echo "lab environment ready"', cls: '' },
+    { html: '<span class="ok">lab environment ready</span><span class="cursor"></span>', cls: '' },
+  ];
+  const term = document.getElementById('bootTerminal');
+  let delay = 200;
+  bootLines.forEach((l, i) => {
+    const div = document.createElement('div');
+    div.className = 'line';
+    div.innerHTML = l.html;
+    div.style.animationDelay = delay + 'ms';
+    term.appendChild(div);
+    delay += 260;
+  });
+
+  // Ticket data — home lab exercises, not job incidents.
+  // Empty for now: no labs have been completed and published yet.
+  // Add objects here (id, title, severity, status, problem, diagnosis,
+  // rootCause, resolution, prevention, meta) as real labs are finished.
+  const tickets = [];
+
+  const severityLabel = { 1: 'SEV-1', 2: 'SEV-2', 3: 'EXERCISE' };
+  const severityClass = { 1: 'badge-sev1', 2: 'badge-sev2', 3: 'badge-sev3' };
+  const statusLabel = { completed: 'COMPLETED', planned: 'NOT YET RUN' };
+  const statusClass = { completed: 'badge-resolved', planned: 'badge-sev2' };
+
+  const list = document.getElementById('ticketList');
+  tickets.forEach((t, idx) => {
+    const ticket = document.createElement('div');
+    ticket.className = 'ticket';
+
+    const diagnosisHtml = t.diagnosis.map(line => {
+      if (line === '') return '<div style="height:6px;"></div>';
+      return '<div>' + line + '</div>';
+    }).join('');
+
+    ticket.innerHTML = `
+      <div class="ticket-head" role="button" tabindex="0" aria-expanded="false">
+        <div class="ticket-head-left">
+          <span class="ticket-id">${t.id}</span>
+          <span class="ticket-title">${t.title}</span>
+        </div>
+        <div class="ticket-head-left">
+          <span class="badge ${severityClass[t.severity]}">${severityLabel[t.severity]}</span>
+          <span class="badge ${statusClass[t.status]}">${statusLabel[t.status]}</span>
+          <span class="ticket-toggle">+</span>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <div class="ticket-body-inner">
+          <div class="tb-row">
+            <div class="tb-label">Problem</div>
+            <div class="tb-text">${t.problem}</div>
+          </div>
+          <div class="tb-row">
+            <div class="tb-label">Diagnosis</div>
+            <div class="code-block">${diagnosisHtml}</div>
+          </div>
+          <div class="tb-row">
+            <div class="tb-label">Root Cause</div>
+            <div class="tb-text">${t.rootCause}</div>
+          </div>
+          <div class="tb-row">
+            <div class="tb-label">Resolution</div>
+            <div class="tb-text">${t.resolution}</div>
+          </div>
+          <div class="tb-row">
+            <div class="tb-label">Prevention</div>
+            <div class="tb-text">${t.prevention}</div>
+          </div>
+          <div class="tb-row">
+            <div class="meta-row">
+              <span>⏱ ${t.meta.time}</span>
+              <span>🛠 ${t.meta.tools}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const head = ticket.querySelector('.ticket-head');
+    const body = ticket.querySelector('.ticket-body');
+    const bodyInner = ticket.querySelector('.ticket-body-inner');
+
+    function toggle() {
+      const isOpen = ticket.classList.contains('open');
+      if (isOpen) {
+        body.style.maxHeight = '0px';
+        ticket.classList.remove('open');
+        head.setAttribute('aria-expanded', 'false');
+      } else {
+        ticket.classList.add('open');
+        body.style.maxHeight = bodyInner.offsetHeight + 'px';
+        head.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    head.addEventListener('click', toggle);
+    head.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+
+    list.appendChild(ticket);
+
+    // Open the first ticket by default
+    if (idx === 0) {
+      setTimeout(() => {
+        ticket.classList.add('open');
+        body.style.maxHeight = bodyInner.offsetHeight + 'px';
+        head.setAttribute('aria-expanded', 'true');
+      }, 100);
+    }
+  });
+</script>
+
+</body>
+</html>
